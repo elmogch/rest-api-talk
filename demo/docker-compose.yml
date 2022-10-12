@@ -1,21 +1,10 @@
 version: '3'
 services:
   api:
-    image: rest-api-talk
+    image: rest-api_http-methods_talk
+    container_name: rest-api_http-methods_demo
     build: .
-    networks:
-      - backend
     ports:
       - "3000:3000"
     volumes:
       - ./:/usr/src/app
-
-  web-cli:
-    image: rest-api-talk
-    networks:
-      - backend
-    command: sh
-
-networks:
-  backend:
-    driver: bridge
