@@ -1,17 +1,37 @@
-'use strict';
-
 const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
 
-// Constants
-const PORT = 8080;
-const HOST = '0.0.0.0';
+const usersRouter = require("./users");
 
-// App
+const config = {
+    name: 'rest-api-talk',
+    port: 3000,
+    host: '0.0.0.0',
+};
+
+/**
+ * Inicialización del servidor
+ */
 const app = express();
-app.get('/', (req, res) => {
-  res.send('Hello World');
+
+app.use(bodyParser.json());
+app.use(cors());
+
+app.listen(config.port, config.host, (e)=> {
+  if(e) {
+      throw new Error('Internal Server Error');
+  }
 });
 
-app.listen(PORT, HOST, () => {
-  console.log(`Running on http://${HOST}:${PORT}`);
+/**
+ * Rutas Home API
+ */
+app.get('/', (req, res) => {
+  res.redirect('/users');
 });
+
+/**
+ * Rutas User API
+ */
+app.use("/users", usersRouter);
