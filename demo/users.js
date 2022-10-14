@@ -1,21 +1,24 @@
 const express = require('express');
+const uniqid = require('uniqid'); 
+
 const router = express.Router();
 
 let users = [
     {
-      id: 1,
+      id: '4n5pxq24kpiob12og9',
       name: 'Luis',
       email: 'luis@gmail.com',
+      picture: 'https://elmogch.dev/images/elmo-octocat.png',
       status: 'ACTIVE'
     },
     {
-      id: 2,
+      id: '4n5pxq24kriob12ogd',
       name: 'Enrique',
       email: 'enrique@gmail.com',
       status: 'INACTIVE'
     },
     {
-      id: 3,
+      id: '4n5pxq24ksiob12ogl',
       name: 'Maria',
       email: 'maria@gmail.com',
       status: 'ACTIVE'
@@ -37,8 +40,7 @@ router.get('/', (req, res) => {
  */
 router.get('/:id', (req, res) => {
     // Se busca el recurso/usuario
-    const id = parseInt(req.params.id)
-    const user = users.find((userItem) => userItem.id === id);
+    const user = users.find((userItem) => userItem.id === req.params.id);
 
     if (user) {
         // Si existe, se envía el recurso/usuario
@@ -56,24 +58,25 @@ router.get('/:id', (req, res) => {
 router.post('/', (req, res) => {
     // Se valida el token de autorización
     if (req.headers.authorization !== '1234') {
-        res.status(401).send({message: 'Usuario no autorizado'});
+        return res.status(401).send({message: 'Usuario no autorizado'});
     }
 
     // Se validan los datos enviados por el cliente
     if (!req.body.name) {
-        res.status(400).send({message: 'El nombre es obligatorio'});
+        return res.status(400).send({message: 'El nombre es obligatorio'});
     }
     if (!req.body.email) {
-        res.status(400).send({message: 'El email es obligatorio'});
+        return res.status(400).send({message: 'El email es obligatorio'});
     }
     if (!req.body.status) {
-        res.status(400).send({message: 'El status es obligatorio'});
+        return res.status(400).send({message: 'El status es obligatorio'});
+    } else if (req.body.status !== 'ACTIVE' && req.body.status !== 'INACTIVE') {
+        return res.status(400).send({message: 'El status es incorrecto'});
     }
 
     // Se crea el nuevo recurso/usuario
-    const id = users[users.length-1].id + 1;
     const newUser = {
-        id,
+        id: uniqid(),
         name: req.body.name,
         email: req.body.email,
         status: req.body.status
@@ -92,28 +95,29 @@ router.post('/', (req, res) => {
  router.put('/:id', (req, res) => {
     // Se valida el token de autorización
     if (req.headers.authorization !== '1234') {
-        res.status(401).send({message: 'Usuario no autorizado'});
+        return res.status(401).send({message: 'Usuario no autorizado'});
     }
 
     // Se validan los datos enviados por el cliente
     if (!req.body.name) {
-        res.status(401).send({message: 'El nombre es obligatorio'});
+        return res.status(401).send({message: 'El nombre es obligatorio'});
     }
     if (!req.body.email) {
-        res.status(401).send({message: 'El email es obligatorio'});
+        return res.status(401).send({message: 'El email es obligatorio'});
     }
     if (!req.body.status) {
-        res.status(401).send({message: 'El status es obligatorio'});
+        return res.status(401).send({message: 'El status es obligatorio'});
+    } else if (req.body.status !== 'ACTIVE' && req.body.status !== 'INACTIVE') {
+        return res.status(400).send({message: 'El status es incorrecto'});
     }
 
     // Se busca el recurso/usuario
-    const id = parseInt(req.params.id)
-    const userIndex = users.findIndex(userItem => userItem.id === id);
+    const userIndex = users.findIndex(userItem => userItem.id === req.params.id);
 
     if (userIndex !== -1) {
         // Si existe, se actualiza el recurso/usuario
         const updateUser = {
-            id,
+            ...users[userIndex],
             name: req.body.name,
             email: req.body.email,
             status: req.body.status
@@ -140,12 +144,11 @@ router.post('/', (req, res) => {
 router.delete('/:id', (req, res) => {
     // Se valida el token de autorización
     if (req.headers.authorization !== '1234') {
-        res.status(401).send({message: 'Usuario no autorizado'});
+        return res.status(401).send({message: 'Usuario no autorizado'});
     }
 
     // Se busca el recurso/usuario
-    const id = parseInt(req.params.id)
-    const userIndex = users.findIndex(userItem => userItem.id === id);
+    const userIndex = users.findIndex(userItem => userItem.id === req.params.id);
     
     if (userIndex !== -1) {
         // Si existe, se elimina el recurso/usuario
